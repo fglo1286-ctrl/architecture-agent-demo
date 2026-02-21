@@ -1,0 +1,27 @@
+name: Create PR from Agent
+
+on:
+  repository_dispatch:
+    types: [create-pr]
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create branch and commit
+        run: |
+          git checkout -b agent-demo-${{ github.run_id }}
+          echo "Cambio generado por agente" >> demo.txt
+          git add .
+          git commit -m "Cambio automático del agente"
+          git push origin HEAD
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "PR generado por agente"
+          body: "Creado automáticamente"
+          branch: agent-demo-${{ github.run_id }}
